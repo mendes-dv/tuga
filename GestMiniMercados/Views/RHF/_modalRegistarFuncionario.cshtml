@@ -1,0 +1,121 @@
+﻿<div id="modalRegistoFuncs" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registo de Funcionários</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="" method="post" action="/RHF/Funcionarios">
+                <div class="modal-body">
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Nome do Funcionário</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col-12">
+                            <input type="text" id="Nome_Funcionario" name="Nome_Funcionario" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Foto do Funcionário</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col-12">
+                            <input type="file" id="Foto" name="Foto" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Número de Telemóvel</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Telemovel" name="Telemovel" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Morada</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Morada" name="Morada" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Número de Contribuinte</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="N_Contribuinte" name="N_Contribuinte" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Estado Civil</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <select id="Estado_Civil" name="Estado_Civil" class="form-control" required>
+                                <option value="Solteiro">Solteiro(a)</option>
+                                <option value="Casado">Casado(a)</option>
+                                <option value="Viuvo">Viúvo(a)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Data de Nascimento</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="date" id="Data_Nascimento" name="Data_Nascimento" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Password</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="password" id="Password" name="Password" class="form-control" required />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Registar Funcionário</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

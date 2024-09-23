@@ -1,0 +1,70 @@
+﻿<div id="modalRegistarFornecedor" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registo de Produtos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="" method="post" action="/Produtos/Categorias/All">
+                <div class="modal-body">
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Nome do Fornecedor</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col-12">
+                            <input type="text" id="Nome_Produto" name="Nome_Fornecedor" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Categoria</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <select id="drop_cats" name="Id_Categoria" class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Morada</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Morada" name="Morada" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>N_Contribuinte</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="N_Contribuinte" name="N_Contribuinte" class="form-control" required />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Registar Fornecedor</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

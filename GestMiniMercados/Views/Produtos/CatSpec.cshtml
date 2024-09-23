@@ -1,0 +1,312 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Bebidas";
+}
+
+@model string
+
+@section Body {
+
+    <div class="container-fluid">
+        <partial name="_tituloPagina" model="@Model" />
+
+        <div class="row">
+            @{ 
+                List<CategoriaPerc> categoriaPercs = ViewBag.CategoriasPercs;
+                CategoriaPerc cat = categoriaPercs.Where(_cat => _cat.NomeCategoria == Model).FirstOrDefault();
+            }
+            <partial name="_CartaoInfoCategoriaSpec" model="cat" />
+        </div>
+
+        <div class="row">
+
+            <partial name="_tableProdutos" />
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Lucros De Cada Produto</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="lucros_prod" width="500" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Produtos A Acabar</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="produtos_a_acabar_table" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome do Produto</th>
+                                        <th>Quantidade Atual do Produto</th>
+                                        <th>Quantidade Máxima do Produto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <partial name="_tableFornecedores" />
+
+        </div>
+
+    </div>
+
+} 
+
+@section Scripts {
+
+    <script>
+
+        var info_prods = [];
+        var temp_inf_prods = [];
+
+        var nome_prods = [];
+        var lucro_prods = [];
+
+        var prods_acabar = [];
+        var temp_prods_acabar = [];
+
+        var info_fornecedores = [];
+        var inf_forn = [];
+
+        @{
+            foreach(InfoProd inf_prods in ViewBag.InfoProds)
+            {
+                if((Convert.ToDouble(inf_prods.QtdAtualProduto) / Convert.ToDouble(inf_prods.QtdMaximaProduto)) * 100 < 50.0)
+                {
+                    @:temp_prods_acabar.push("@inf_prods.NomeProduto");
+                    @:temp_prods_acabar.push("@inf_prods.QtdAtualProduto");
+                    @:temp_prods_acabar.push("@inf_prods.QtdMaximaProduto");
+
+                    @:prods_acabar.push(temp_prods_acabar);
+
+                    @:temp_prods_acabar = [];
+                }
+
+                @:nome_prods.push("@inf_prods.NomeProduto");
+                @:lucro_prods.push("@inf_prods.MargemLucro".replace(/,/g, '.'));
+
+                @:temp_inf_prods.push("@inf_prods.NomeProduto");
+                @:temp_inf_prods.push("@inf_prods.QtdAtualProduto");
+                @:temp_inf_prods.push("@inf_prods.QtdMaximaProduto");
+                @:temp_inf_prods.push("@inf_prods.PreçoVenda");
+                @:temp_inf_prods.push("@inf_prods.PreçoCompra");
+                @:temp_inf_prods.push("@inf_prods.MargemLucro");
+                @:temp_inf_prods.push("@inf_prods.PreçoCampanha");
+
+                @:info_prods.push(temp_inf_prods);
+
+                @:temp_inf_prods = [];
+            }
+
+            foreach(InfoFornecedore inf_forn in ViewBag.InfoFornecedoresCat)
+            {
+                @:inf_forn.push("@inf_forn.NomeFornecedor");
+                @:inf_forn.push("@inf_forn.NomeCategoriaFornecida");
+                @:inf_forn.push("@inf_forn.Morada");
+                @:inf_forn.push("@inf_forn.NContribuinte");
+
+                @:info_fornecedores.push(inf_forn);
+
+                @:inf_forn = [];
+            }
+        }
+
+        $(document).ready(function () {
+            $('#produtos_table').DataTable({
+                data: info_prods,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#fornecedores_table').DataTable({
+                data: info_fornecedores,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#produtos_a_acabar_table').DataTable({
+                data: prods_acabar,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        var ctx = document.getElementById('lucros_prod').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nome_prods,
+                datasets: [{
+                    label: 'Lucro',
+                    data: lucro_prods,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+    </script>
+
+}
+

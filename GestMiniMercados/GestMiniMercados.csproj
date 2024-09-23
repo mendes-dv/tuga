@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Home\Dashboard.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Login.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Pessoal\Ferias.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Pessoal\Perfil.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\Categorias.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\CatSpec.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\Produtos.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\_CartaoInfoCategoriaSpec.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\_modalRegistarFornecedor.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\_modalRegistarProduto.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\_tableFornecedores.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Produtos\_tableProdutos.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\RHF\Financas.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\RHF\Funcionarios.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\RHF\_modalRegistarFuncionario.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\404Error.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_CartaoInfoCategoria.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_tituloPagina.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  
+</Project>

@@ -1,0 +1,25 @@
+﻿services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - SA_PASSWORD=YourStrong!Passw0rd
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+      - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql  
+
+  gestminimercados:
+    image: gestminimercados
+    build:
+      context: .
+      dockerfile:
+        GestMiniMercados/Dockerfile
+    depends_on:
+      - sqlserver
+    ports:
+      - "8000:8080"
+
+volumes:
+    sqlserverdata:

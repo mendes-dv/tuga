@@ -1,0 +1,224 @@
+﻿@{ 
+    Layout = "_Layout";
+    ViewData["Title"] = "Funcionários";
+}
+
+@using System.Web;
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Funcionários")" />
+
+        <div id="modalFuncs"></div>
+
+        <div class="row">
+
+            @{
+                foreach (User user in ViewBag.Funcionarios)
+                {
+                    try
+                    {
+                        string foto_formatada = String.Empty;
+
+                        if (user.Foto != null)
+                        {
+                            string foto_base64 = Convert.ToBase64String(user.Foto);
+                            foto_formatada = String.Format("data:image/gif;base64,{0}", foto_base64);
+                        }
+
+                        <div class="col-3">
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="@foto_formatada" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title">@(user.NomeFuncionario)</h5>
+                                    <p class="card-text">@user.TpUtilizador</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-12 col-md-6 mb-4 mt-5">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Funcionários do mês</h6>
+                        @{
+                            if (((User)ViewBag.FuncionarioComLogin).TpUtilizador== "Gerente")
+                            {
+                                <div class="dropdown no-arrow">
+                                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                        <div class="dropdown-header">Opções:</div>
+                                        <a class="dropdown-item" href="#" onclick="modal_registo_func()">Adicionar Funcionário</a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="table_funcionario_mes" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome Funcionário</th>
+                                        <th>Cargo</th>
+                                        <th>Morada</th>
+                                        <th>Nº Telemóvel</th>
+                                        <th>Data De Nascimento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-12 col-md-6 mb-4 mt-5">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Aniversários</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="calendario_aniversarios"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        var info_funcionario_mes = [];
+        var inf_func_mes = [];
+
+        var temp = [];
+
+        @{
+            foreach(User func in ViewBag.FuncionariosDoMes)
+            {
+                @:inf_func_mes.push("@func.NomeFuncionario");
+                @:inf_func_mes.push("@func.TpUtilizador");
+                @:inf_func_mes.push("@func.Morada");
+                @:inf_func_mes.push("@func.Telemovel");
+                @:inf_func_mes.push("@func.DataNascimento.ToShortDateString()");
+
+                @:info_funcionario_mes.push(inf_func_mes);
+
+                @:inf_func_mes = [];
+            }
+        }
+
+        function modal_registo_func() {
+
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/RHF/_modalRegistarFuncionario',
+                    dataType: 'html',
+                    cache: false,
+                    async: true,
+                    success: function (data) {
+                        $('#modalFuncs').html(data);
+                        $('#modalRegistoFuncs').modal('show');
+                    }
+                });
+
+        }
+
+        $(document).ready(function () {
+            $('#table_funcionario_mes').DataTable({
+                data: info_funcionario_mes,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendario_aniversarios');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'pt',
+                initialView: 'dayGridMonth',
+                events: [
+                    @{
+                        foreach(User func in ViewBag.Funcionarios)
+                        {
+                            @:{ title: 'Anivers\ário - @(func.NomeFuncionario)', start: '@(DateTime.ParseExact(Convert.ToDateTime(func.DataNascimento.Day + "-" + func.DataNascimento.Month + "-" + DateTime.Today.Year).ToShortDateString(), "dd/MM/yyyy", null).ToString("yyyy-MM-dd"))', end: '@(DateTime.ParseExact(Convert.ToDateTime(func.DataNascimento.Day + "-" + func.DataNascimento.Month + "-" + DateTime.Today.Year).ToShortDateString(), "dd/MM/yyyy", null).ToString("yyyy-MM-dd"))' },
+                        }
+                    }
+                ]
+            });
+
+            calendar.render();
+        });
+
+    </script>
+
+}

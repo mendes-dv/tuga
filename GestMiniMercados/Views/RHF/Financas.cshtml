@@ -1,0 +1,161 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Finanças";
+}
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Finanças")" />
+
+        <div class="row">
+
+            <div class="col-xl-12 col-lg-5">
+                <div class="card shadow border-left-info mb-5" style="height:500px">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Previsão de lucro mensal</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-bar pt-4 pb-2">
+                            <canvas id="lineChart_previsao_mensal_lucro" width="500" height="125"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-12 col-md-6 mb-4 mt-5">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Salários Mensais</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="table_salario_mensal" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome Funcionário</th>
+                                        <th>Cargo</th>
+                                        <th>Nº Telemóvel</th>
+                                        <th>Salário</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        var salarios_mensais = [];
+        var info_salario_mensais = [];
+
+        @{
+            foreach(User func in ViewBag.Funcionarios)
+            {
+                @:info_salario_mensais.push("@func.NomeFuncionario");
+                @:info_salario_mensais.push("@func.TpUtilizador");
+                @:info_salario_mensais.push("@func.Telemovel");
+                @:info_salario_mensais.push("@(((double)ViewBag.LucroMensal * 0.6) / Convert.ToDouble(((List<User>)ViewBag.Funcionarios).Count))");
+
+                @:salarios_mensais.push(info_salario_mensais);
+
+                @:info_salario_mensais = [];
+            }
+        }
+
+        $(document).ready(function () {
+            $('#table_salario_mensal').DataTable({
+                data: salarios_mensais,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        var ctx = document.getElementById('lineChart_previsao_mensal_lucro').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["@(DateTime.Now.ToString("MMMM").ToUpper())"],
+                datasets: [{
+                    label: 'Lucro Mensal',
+                    data: ["@(((double)ViewBag.LucroMensal))".replace(/,/g, '.')],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+    </script>
+
+}

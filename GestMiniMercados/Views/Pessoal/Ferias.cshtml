@@ -1,0 +1,94 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Marcação de Férias";
+}
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Marcação de Férias")" />
+
+        <div class="row">
+
+            <div class="col-xl-12 col-md-6 mb-4 mt-5">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Ferias</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="calendario_ferias"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        var start_ferias = null;
+        var end_ferias = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendario_ferias');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'pt',
+                initialView: 'dayGridMonth',
+                selectable: true,
+                events: [
+                    @{
+                        foreach(Feria ferias in ViewBag.Ferias)
+                        {
+                            @:{ title: 'F\érias', start: '@(DateTime.ParseExact(Convert.ToDateTime(ferias.DataInicioFerias.Day + "-" + ferias.DataInicioFerias.Month + "-" + DateTime.Today.Year).ToShortDateString(),
+                                                          "dd/MM/yyyy", null).ToString("yyyy-MM-dd"))', end: '@(DateTime.ParseExact(Convert.ToDateTime(ferias.DataFimFerias.Day + "-" + ferias.DataFimFerias.Month + "-" 
+                                                                                                              + DateTime.Today.Year).ToShortDateString(), "dd/MM/yyyy", null).ToString("yyyy-MM-dd"))' },
+                        }
+                    }
+                ],
+                customButtons: {
+                    btn_marcarFerias: {
+                        text: 'Marcar Férias',
+                        click: function (info) {
+
+                            var form = new FormData();
+                            form.append("Data_Inicio_Ferias", start_ferias);
+                            form.append("Data_Fim_Ferias", end_ferias);
+
+                            var settings = {
+                                "url": "https://localhost:44337/Pessoal/Ferias",
+                                "method": "POST",
+                                "timeout": 0,
+                                "processData": false,
+                                "mimeType": "multipart/form-data",
+                                "contentType": false,
+                                "data": form
+                            };
+
+                            $.ajax(settings).done(function (response) {
+                                
+                            });
+
+                        }
+                    }
+                },
+                headerToolbar: {
+                    right: 'today prev,next btn_marcarFerias'
+                },
+                select: function (info) {
+                    start_ferias = info.startStr;
+                    end_ferias = info.endStr;
+                }
+            });
+
+            calendar.render();
+        });
+
+    </script>
+
+}

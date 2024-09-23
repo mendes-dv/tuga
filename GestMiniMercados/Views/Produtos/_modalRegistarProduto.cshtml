@@ -1,0 +1,118 @@
+﻿<div id="modalRegistoProds" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registo de Produtos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="" method="post" action="/Produtos/Produtos">
+                <div class="modal-body">
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Nome do Produto</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col-12">
+                            <input type="text" id="Nome_Produto" name="Nome_Produto" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Categoria</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <select id="drop_cats" name="Id_Categoria" class="form-control" required>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Quantidade de Produto Atual</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Qtd_Produto" name="Qtd_Produto" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Quantidade de Produto Máxima</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Qtd_Total" name="Qtd_Total" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Preço de Compra</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Preco_Unitario_Compra" name="Preco_Unitario_Compra" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Preço de Venda</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Preco_Unitario_Venda" name="Preco_Unitario_Venda" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Margem Unitária</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Margem_Unitaria" name="Margem_Unitaria" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <label>Preço de Campanha</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row text-center">
+                        <div class="col">
+                            <input type="text" id="Preco_Campanha" name="Preco_Campanha" class="form-control" required />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Registar Produto</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

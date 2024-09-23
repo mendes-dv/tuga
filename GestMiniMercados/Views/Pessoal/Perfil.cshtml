@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Perfil";
+}
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Perfil")" />
+
+        <form method="post" action="/Pessoal/Perfil">
+            <div class="col-xl-12 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Produtos A Acabar</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="Nome_Funcionario" class="">Nome</label>
+                                <input value="@(((User)ViewBag.UserLogged).NomeFuncionario)" name="Nome_Funcionario" id="Nome_Funcionario" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="Telemovel" class="">Telemóvel</label>
+                                <input value="@(((User)ViewBag.UserLogged).Telemovel)" name="Telemovel" id="Telemovel" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="Data_Nascimento" class="">Data Nascimento</label>
+                                <input value="@(DateTime.ParseExact(Convert.ToDateTime(((User)ViewBag.UserLogged).DataNascimento.Day + "-" + ((User)ViewBag.UserLogged).DataNascimento.Month + "-" + DateTime.Today.Year).ToShortDateString(), "dd/MM/yyyy", null).ToString("yyyy-MM-dd"))" name="Data_Nascimento" id="Data_Nascimento" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="Morada" class="">Morada</label>
+                                <input value="@(((User)ViewBag.UserLogged).Morada)" name="Morada" id="Morada" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="N_Contribuinte" class="">N_Contribuinte</label>
+                                <input value="@(((User)ViewBag.UserLogged).NContribuinte)" name="N_Contribuinte" id="N_Contribuinte" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="Estado_Civil" class="">Estado Civil</label>
+                                <select id="Estado_Civil" name="Estado_Civil" class="form-control">
+                                    <option value="Solteiro">Solteiro(a)</option>
+                                    <option value="Casado">Casado(a)</option>
+                                    <option value="Viuvo">Viúvo(a)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-3">
+                                <button type="submit" class="btn btn-primary">Guardar Dados</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            console.log("@(((User)ViewBag.UserLogged).NomeFuncionario)");
+
+        });
+
+    </script>
+
+}

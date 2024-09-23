@@ -1,0 +1,166 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "DashBoard";
+}
+
+@section Body {
+
+    @*new*@
+    <div class="container-fluid">
+        <partial name="_tituloPagina" model="@("Painel de Controlo")" />
+
+        <div class="row">
+            @foreach (CategoriaPerc categoriaPerc in ViewBag.CategoriasPercs)
+            {
+                <partial name="_CartaoInfoCategoria" model="categoriaPerc" />
+            }
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Lucros em cada categoria</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="lucros_cat" width="500" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Próximos Fornecimentos</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="proximos_fornecimentos_table" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nome Fornecedor</th>
+                                        <th>Produto</th>
+                                        <th>Data de Entrega</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+    <script>
+
+        var nomesCategorias = [];
+        var lucros = [];
+
+        var proximos_fornecimentos = [];
+        var info_etr = [];
+
+        @{
+            foreach (CategoriaPerc categoriaPerc in ViewBag.CategoriasPercs)
+            {
+                @:nomesCategorias.push("@categoriaPerc.NomeCategoria");
+                @:lucros.push("@categoriaPerc.Lucro".replace(/,/g, '.'));
+            }
+
+            foreach(InfoEntrega etr in ViewBag.Entregas)
+            {
+                @:info_etr.push("@etr.NomeFornecedor");
+                @:info_etr.push("@etr.NomeProduto");
+                @:info_etr.push("@etr.DataEntrega");
+
+                @:proximos_fornecimentos.push(info_etr);
+
+                @:info_etr = [];
+            }
+        }
+
+        var ctx = document.getElementById('lucros_cat').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nomesCategorias,
+                datasets: [{
+                    label: 'Lucro',
+                    data: lucros,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            $('#proximos_fornecimentos_table').DataTable({
+                data: proximos_fornecimentos,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+    </script>
+}

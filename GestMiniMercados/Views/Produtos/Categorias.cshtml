@@ -1,0 +1,273 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Categorias";
+}
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Categorias")" />
+
+        <div id="modalForn"></div>
+
+        <div class="row">
+            @foreach (CategoriaPerc categoriaPerc in ViewBag.CategoriasPercs)
+            {
+                <partial name="_CartaoInfoCategoria" model="categoriaPerc" />
+            }
+        </div>
+
+        <div class="row">
+
+            <partial name="_tableFornecedores" />
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">IVA por Categoria</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="iva_categoria_table" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th>IVA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-5">
+                <div class="card shadow border-left-info mb-5" style="height:500px">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Distribuição de Produtos por Categoria</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="pieChart_prods_per_cat" width="500" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        var info_fornecedores = [];
+        var inf_forn = [];
+
+        var iva = [];
+        var temp_iva = [];
+
+        var qtd_prods_cat = [];
+        var nome_cat = [];
+
+        var categorias = [];
+        var id_cats = [];
+
+        @{
+            foreach(InfoFornecedore inf_forn in ViewBag.InfoFornecedores)
+            {
+                @:inf_forn.push("@inf_forn.NomeFornecedor");
+                @:inf_forn.push("@inf_forn.NomeCategoriaFornecida");
+                @:inf_forn.push("@inf_forn.Morada");
+                @:inf_forn.push("@inf_forn.NContribuinte");
+
+                @:info_fornecedores.push(inf_forn);
+
+                @:inf_forn = [];
+            }
+
+            foreach(IvaCategorium iva in ViewBag.Ivas)
+            {
+                @:temp_iva.push("@iva.NomeCategoria");
+                @:temp_iva.push("@(Math.Round(((iva.IvaCategoria) * 100)))%");
+
+                @:iva.push(temp_iva);
+
+                @:temp_iva = [];
+            }
+
+            foreach (ProdsPerCat prodsPerCat in ViewBag.ProdsPerCat)
+            {
+                @:nome_cat.push("@prodsPerCat.NomeCategoria");
+                @:qtd_prods_cat.push("@prodsPerCat.QtdProds");
+            }
+
+            foreach(Categorium cat in ViewBag.Categorias)
+            {
+                @:categorias.push("@(cat.NomeCategoria)");
+                @:id_cats.push("@(cat.IdCategoria)")
+            }
+
+        }
+
+        function modal_registo_forn() {
+
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Produtos/_modalRegistarFornecedor',
+                    dataType: 'html',
+                    cache: false,
+                    async: true,
+                    success: function (data) {
+                        $('#modalForn').html(data);
+                        $('#modalRegistarFornecedor').modal('show');
+
+                        var drop_cat = document.getElementById("drop_cats");
+
+                        for (var i = 0; i < categorias.length; i++) {
+                            var opt = document.createElement("option");
+
+                            opt.value = id_cats[i];
+                            opt.innerHTML = categorias[i];
+
+                            drop_cat.appendChild(opt);
+                        }
+                    }
+                });
+
+        }
+
+        $(document).ready(function () {
+            $('#fornecedores_table').DataTable({
+                data: info_fornecedores,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#iva_categoria_table').DataTable({
+                data: iva,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        var ctx = document.getElementById('pieChart_prods_per_cat').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: nome_cat,
+                datasets: [{
+                    data: qtd_prods_cat,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                }]
+            },
+        });
+
+    </script>
+
+}

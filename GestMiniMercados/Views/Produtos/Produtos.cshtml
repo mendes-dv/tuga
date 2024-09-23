@@ -1,0 +1,233 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Produtos";
+}
+
+@section Body {
+
+    <div class="container-fluid">
+
+        <partial name="_tituloPagina" model="@("Produtos")"/>
+
+        <div id="modalProds"></div>
+
+        <div class="row">
+
+            <partial name="_tableProdutos" model="@("Produtos")"/>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Produtos com lucro acima de 40%</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="lucros_prods" width="500" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Produtos com vendas acima dos 50%</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="vendas_prods" width="500" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+
+    <script>
+
+        var info_prods = [];
+        var temp_inf_prods = [];
+
+        var categorias = [];
+        var id_cats = [];
+
+        var lucros = [];
+        var nome_prods_lucros = [];
+
+        var vendas = [];
+        var nome_prods_vendas = [];
+
+        @{
+            foreach(InfoProd inf_prods in ViewBag.Produtos)
+            {
+                if((inf_prods.MargemLucro / inf_prods.PreçoVenda) * 100 >= 40.0)
+                {
+                    @:nome_prods_lucros.push("@inf_prods.NomeProduto");
+                    @:lucros.push("@inf_prods.MargemLucro".replace(/,/g, '.'));
+                }
+
+                if((Convert.ToDouble(inf_prods.QtdAtualProduto) / Convert.ToDouble(inf_prods.QtdMaximaProduto)) * 100 < 50.0)
+                {
+                    @:nome_prods_vendas.push("@inf_prods.NomeProduto");
+                    @:vendas.push("@(inf_prods.QtdMaximaProduto - inf_prods.QtdAtualProduto)");
+                }
+
+                @:temp_inf_prods.push("@inf_prods.NomeProduto");
+                @:temp_inf_prods.push("@inf_prods.QtdAtualProduto");
+                @:temp_inf_prods.push("@inf_prods.QtdMaximaProduto");
+                @:temp_inf_prods.push("@inf_prods.PreçoVenda");
+                @:temp_inf_prods.push("@inf_prods.PreçoCompra");
+                @:temp_inf_prods.push("@inf_prods.MargemLucro");
+                @:temp_inf_prods.push("@inf_prods.PreçoCampanha");
+
+                @:info_prods.push(temp_inf_prods);
+
+                @:temp_inf_prods = [];
+            }
+
+            foreach(Categorium cat in ViewBag.Categorias)
+            {
+                @:categorias.push("@(cat.NomeCategoria)");
+                @:id_cats.push("@(cat.IdCategoria)")
+            }
+        }
+
+
+        function modal_registo_prod() {
+
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Produtos/_modalRegistarProduto',
+                    dataType: 'html',
+                    cache: false,
+                    async: true,
+                    success: function (data) {
+                        $('#modalProds').html(data);
+                        $('#modalRegistoProds').modal('show');
+
+                        var drop_cat = document.getElementById("drop_cats");
+
+                        for (var i = 0; i < categorias.length; i++) {
+                            var opt = document.createElement("option");
+
+                            opt.value = id_cats[i];
+                            opt.innerHTML = categorias[i];
+
+                            drop_cat.appendChild(opt);
+                        }
+                    }
+                });
+
+        }
+
+        $(document).ready(function () {
+            $('#produtos_table').DataTable({
+                data: info_prods,
+                language: {
+                    search: "Filtrar:",
+                    infoEmpty: "Não há registos para mostrar",
+                    loadingRecords: "A carregar os dados",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior",
+                        first: "Primeiro",
+                        last: "Último"
+                    },
+                    emptyTable: "Nenhum registo encontrado",
+                    info: "Mostrando de _START_ até _END_ de _TOTAL_ registos",
+                    infoEmpty: "Mostrando 0 até 0 de 0 registos",
+                    infoFiltered: "(Filtrados de _MAX_ registos)",
+                    infoPostFix: "",
+                    infoThousands: ".",
+                    lengthMenu: "_MENU_ resultados por página",
+                    loadingRecords: "Carregando...",
+                    processing: "Processando...",
+                    zeroRecords: "Nenhum registo encontrado",
+                    search: "Pesquisar",
+
+                    aria: {
+                        sortAscending: ": Ordenar colunas de forma ascendente",
+                        sortDescending: ": Ordenar colunas de forma descendente"
+                    },
+
+                    select: {
+                        rows: {
+                            "_": "Selecionado %d linhas",
+                            "0": "Nenhuma linha selecionada",
+                            "1": "Selecionado 1 linha"
+                        }
+                    },
+                    buttons: {
+                        copy: "Copiar para a área de transferência",
+                        copyTitle: "Cópia bem sucedida",
+                        copySuccess: {
+                            "1": "Uma linha copiada com sucesso",
+                            "_": "%d linhas copiadas com sucesso"
+                        }
+                    }
+                }
+            });
+        });
+
+        var ctx = document.getElementById('lucros_prods').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nome_prods_lucros,
+                datasets: [{
+                    label: 'Lucro',
+                    data: lucros,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        var ctx = document.getElementById('vendas_prods').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nome_prods_vendas,
+                datasets: [{
+                    label: 'Vendas',
+                    data: vendas,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+    </script>
+
+}
